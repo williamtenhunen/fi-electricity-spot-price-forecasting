@@ -1,0 +1,10 @@
+pandas
+numpy
+requests
+fmiopendata
+holidays
+lightgbm
+torch
+scikit-learn
+matplotlib
+pyarrow
