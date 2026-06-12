@@ -1,6 +1,6 @@
 # Forecasting Finnish Day-Ahead Electricity Prices
 
-A one-day machine learning project: predict the next 24 hours of Nord Pool
+A machine learning project: predict the next 24 hours of Nord Pool
 spot prices for Finland (FI bidding zone), comparing an LSTM against a
 LightGBM baseline and naive forecasts. Built entirely on open data —
 **no API keys or signups required**.
