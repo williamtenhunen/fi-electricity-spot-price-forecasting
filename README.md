@@ -2,17 +2,17 @@
 
 A machine learning project: predict the next 24 hours of Nord Pool
 spot prices for Finland (FI bidding zone), comparing an LSTM against a
-LightGBM baseline and naive forecasts. Built entirely on open data —
+LightGBM baseline and naive forecasts. Built entirely on open data with
 **no API keys or signups required**.
 
 <!-- FIGURE 1 (hero image): the test-set winter week plot from Step 7d,
      with actual price, LightGBM, LSTM and naive overlaid.
-     Export with: plt.savefig("figures/winter_week_test.png", dpi=150, bbox_inches="tight") -->
+     -->
 ![Forecasts vs actual prices, test-set winter week (Jan 2026)](figures/winter_week_test.png)
 
 ## Why this problem
 
-Spot-price exposure is a daily operational reality in Finland — for
+Spot-price exposure is a daily operational reality in Finland for
 electricity retailers, for industry running price-sensitive processes, and
 for the growing share of consumers on exchange-priced (pörssisähkö)
 contracts. A better 24-hour price forecast directly supports load shifting,
@@ -37,7 +37,7 @@ Jyväskylä shifted by their mean offset (−0.7 °C). Price series had zero
 missing hours.
 
 <!-- FIGURE 2: the hour-of-day × month price heatmap from the EDA (Step 3).
-     Export as figures/price_heatmap.png -->
+      -->
 ![Mean spot price by hour of day and month](figures/price_heatmap.png)
 
 ## Method
@@ -66,7 +66,7 @@ Test set: January–June 2026, never touched during development.
 | **LSTM (168 h → 24 h)** | **25.41** | **40.18** |
 
 <!-- FIGURE 3: the per-horizon MAE curve from Step 7a.
-     Export as figures/lstm_error_by_horizon.png -->
+      -->
 ![LSTM error by forecast horizon](figures/lstm_error_by_horizon.png)
 
 ## Key findings
@@ -74,8 +74,8 @@ Test set: January–June 2026, never touched during development.
 1. **The LSTM beats LightGBM by ~19% MAE, and the win is genuine.** The
    LSTM's input window ends 1 hour before the forecast period, giving it
    fresher information than LightGBM (whose price features are all lagged
-   ≥ 24 h). But even at horizons 13–24 hours — where this freshness
-   advantage has decayed — the LSTM's MAE (25.45) still beats LightGBM's
+   ≥ 24 h). But even at horizons 13–24 hours, where this freshness
+   advantage has decayed, the LSTM's MAE (25.45) still beats LightGBM's
    overall 31.50. The architecture is learning price dynamics, not just
    exploiting recency.
 2. **It generalized.** Validation MAE 23.6 → test MAE 25.4 on a completely
@@ -84,18 +84,18 @@ Test set: January–June 2026, never touched during development.
    energy-crisis year *worsened* test MAE from 31.50 to 34.16. Volatile-era
    data appears to teach transferable spike dynamics, even though its
    absolute price levels are obsolete.
-4. **Naive baselines are hard to beat** — strong autocorrelation at lags
+4. **Naive baselines are hard to beat.** Strong autocorrelation at lags
    24 h (0.68) and 168 h (0.54) means yesterday's price alone gets you
    surprisingly far. Any model that can't beat it isn't worth deploying.
 
-<!-- FIGURE 4: LightGBM feature importance bar chart from Step 5.
-     Export as figures/feature_importance.png -->
+<!-- FIGURE 4: LightGBM feature importance bar chart.
+      -->
 ![LightGBM feature importance](figures/feature_importance.png)
 
 ## How to run
 
 Open `spot_price_forecasting.ipynb` in Google Colab (GPU runtime
-recommended for the LSTM — trains in ~2 minutes on a T4, much slower on
+recommended for the LSTM: trains in ~2 minutes on a T4, much slower on
 CPU). The notebook fetches all data from open APIs on first run and caches
 it locally as parquet; subsequent runs load from cache.
 
@@ -110,19 +110,19 @@ pip install -r requirements.txt
   slightly optimistic.
 - **No wind generation data**: Fingrid's API (wind production and
   consumption forecasts) requires a free API key, which this no-signup
-  project excluded. Likely the single most valuable missing feature —
+  project excluded. Likely the single most valuable missing feature as
   wind is the main driver of negative price hours.
 - **Information asymmetry between models**: quantified above, but a
   production-faithful framing would forecast from the ~12:00 day-ahead
   bidding deadline (i.e., horizons of 12–36 hours).
 - **Single seed, no hyperparameter search**: results are one training run
   each; a proper comparison would average over seeds.
-- The Oulu temperature gap was imputed from a correlated station — a
+- The Oulu temperature gap was imputed from a correlated station: a
   pragmatic, documented choice rather than a rigorous one.
 
 ## Next steps
 
-- Probabilistic forecasts (quantile regression / pinball loss) — a
+- Probabilistic forecasts (quantile regression / pinball loss): a
   retailer cares about price *risk*, not just point estimates
 - Add Fingrid wind and consumption forecasts
 - Reframe to the true bidding-time horizon (12–36 h ahead)
